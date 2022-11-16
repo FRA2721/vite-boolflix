@@ -1,45 +1,48 @@
 <!-- script-section -->
 <script>
-// import-codes-section
+
+// import-store-&-other-vue-filles
 import { store } from "./store";
 import axios from "axios";
-import AppSearch from "./components/AppSearch.vue";
-import AppMain from "./components/AppMain.vue";
+import AppSearchBar from "./components/AppSearchBar.vue";
+import AppMainCode from "./components/AppMainCode.vue";
 
 export default {
   components: {
-    AppSearch,
-    AppMain
+    AppSearchBar,
+    AppMainCode
   },
   data() {
     return {
-      // store-data
+      // store-date
       store
     }
   },
   methods: {
-    search() {
 
-      // api-data-params
+    // search-method
+    search() {
       const apiParams = {
-        api_key: this.store.apiKey,
-        query: this.store.query
+
+        // api-query-data
+        api_key: this.store.apiKey, //store-my-api-key-data
+        query: this.store.searchKey //store-user-input-(query)-data
       }
 
-      // get-methods
-      this.getMoviesResult(apiParams);
-      this.getSeriesResult(apiParams);
+      this.getMoviesRequest(apiParams);
+      this.getSeriesRequest(apiParams);
     },
 
-    getMoviesResult(apiParams) {
+    // movies-request
+    getMoviesRequest(apiParams) {
       axios
-      //dinamic-insert
-      .get(`${this.store.apiURL}/movie`, {
+        // dynamic-insert
+        .get(`${this.store.apiURL}/movie`, {
           params: apiParams //api
           // apiMoviURL: "https://api.themoviedb.org/3/search/movie"
         })
 
-        // store the movies data obtained
+        // store-the-movies-data-obtained
         .then((resp) => {
           this.store.movies = resp.data.results;
         })
@@ -49,43 +52,57 @@ export default {
         })
     },
 
-    getSeriesResult(apiParams) {
+    // series-request
+    getSeriesRequest(apiParams) {
       axios
-      //dinamic-insert
-      .get(`${this.store.apiURL}/tv`, {
-        params: apiParams //api
-        // apiSerieURL: "https://api.themoviedb.org/3/search/tv"
-      })
+      // dynamic-insert
+        .get(`${this.store.apiURL}/tv`, {
+          params: apiParams //api
+          // apiSerieURL: "https://api.themoviedb.org/3/search/tv"
+        })
 
-      // store the series data obtained
-      .then((resp) => {
-        this.store.series = resp.data.results;
-      })
+        // store-the-series-data-obtained
+        .then((resp) => {
+          this.store.series = resp.data.results;
+        })
 
-      .catch(err => {
-        console.log(err);
-      })
+        .catch(err => {
+          console.log(err);
+        })
     }
   }
 }
 </script>
 <!-- /script-section -->
 
-<!-- template-section -->
+<!-- tempalte-section -->
 <template>
 
-  <!-- container -->
-  <div class="container">
-    <AppSearch @search="search" />
-    <AppMain />
+  <div class="program" >
+    <AppSearchBar @search="search" />
+    <!-- main-section -->
+    <main>
+      <AppMainCode />
+    </main>
+    <!-- /main-section -->
   </div>
-  <!-- /container -->
 
 </template>
-<!-- /template-section -->
+<!-- /tempalte-section -->
 
 <!-- style-section -->
 <style lang="scss">
+
+// use-variables-&-generals
 @use "./styles/general.scss" as *;
+@use "./styles/partials/variables" as *;
+
+// main-section-formatting
+main {
+  width: 100%;
+  height: calc(100vh - 80px);
+  background-color: $main-background;
+  overflow-y: auto;
+}
 </style>
 <!-- /style-section -->
