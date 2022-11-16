@@ -1,71 +1,70 @@
 <!-- script-section -->
 <script>
-
-import axios from "axios";
+// import-codes-section
 import { store } from "./store";
-import AppSearchBar from "./components/AppSearchBar.vue";
-import AppMoviesSeriesLists from "./components/AppMoviesSeriesLists.vue";
+import axios from "axios";
+import AppSearch from "./components/AppSearch.vue";
+import AppMain from "./components/AppMain.vue";
 
-export default{
-  data(){
+export default {
+  components: {
+    AppSearch,
+    AppMain
+  },
+  data() {
     return {
-      // store-code
+      // store-data
       store
     }
   },
-  components: {
-    AppSearchBar,
-    AppMoviesSeriesLists
-  },
   methods: {
-    search(){
-      // start-user-call
-      console.log("Start call")
-      this.store.loader = true;
-      console.log(this.store.loader);
-     
-      // movies-user-search-call
+    search() {
+
+      // api-data-params
+      const apiParams = {
+        api_key: this.store.apiKey,
+        query: this.store.query
+      }
+
+      // get-methods
+      this.getMoviesResult(apiParams);
+      this.getSeriesResult(apiParams);
+    },
+
+    getMoviesResult(apiParams) {
       axios
-        .get(this.store.apiMovieURL, { params: this.store.paramsApi })
-
-        .then( (resp) => {
-          this.store.resultMovies = resp.data.results;
-          console.log(this.store.resultMovies, "Movie");
+      //dinamic-insert
+      .get(`${this.store.apiURL}/movie`, {
+          params: apiParams //api
+          // apiMoviURL: "https://api.themoviedb.org/3/search/movie"
         })
 
-        // error-movie
-        .catch( (err) => {
-          console.log( err);
+        // store the movies data obtained
+        .then((resp) => {
+          this.store.movies = resp.data.results;
         })
 
-        // end-call
-        .finally( () => {
-          console.log("End movie call");
-          // search
-          console.log("Start serie call");
-          
-          // series-user-search-call
-          axios
-            .get(this.store.apiSeriesURL, { params: this.store.paramsApi })
-
-            .then( (resp) => {
-              this.store.resultSeries = resp.data.results;
-              console.log(this.store.resultSeries, "Serie");
-            })
-
-            // error-serie
-            .catch( (err) => {
-              console.log( err);
-            })
-
-            // end-call
-            .finally( () => {
-              console.log("End serie call");
-              this.store.loader = false;
-              console.log(this.store.loader);
-            })
+        .catch(err => {
+          console.log(err);
         })
-  
+    },
+
+    getSeriesResult(apiParams) {
+      axios
+      //dinamic-insert
+      .get(`${this.store.apiURL}/tv`, {
+        params: apiParams //api
+        // apiSerieURL: "https://api.themoviedb.org/3/search/tv"
+      })
+
+      // store the series data obtained
+      .then((resp) => {
+        this.store.series = resp.data.results;
+      })
+
+      .catch(err => {
+        console.log(err);
+      })
     }
   }
 }
@@ -74,23 +73,19 @@ export default{
 
 <!-- template-section -->
 <template>
-  <h1>Search</h1>
-  <!-- header-section -->
-  <header>
-    <AppSearchBar @search="search"/>
-  </header>
-  <!-- /header-section -->
 
-  <!-- main-section -->
-  <main>
-    <AppMoviesSeriesLists />
-  </main>
-  <!-- /main-section -->
+  <!-- container -->
+  <div class="container">
+    <AppSearch @search="search" />
+    <AppMain />
+  </div>
+  <!-- /container -->
 
 </template>
 <!-- /template-section -->
 
 <!-- style-section -->
 <style lang="scss">
+@use "./styles/general.scss" as *;
 </style>
 <!-- /style-section -->

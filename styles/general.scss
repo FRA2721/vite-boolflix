@@ -1,0 +1,21 @@
+// import-font-awesome
+@import "node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+
+// general-reset
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+// image-foramtting-section
+img {
+    max-width: 100%;
+}
+
+// container-formatting-section
+.container {
+    width: 90%;
+    padding: 1rem 0;
+    margin: 0 auto;
+}
