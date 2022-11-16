@@ -1,31 +1,96 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+<!-- script-section -->
+<script>
+
+import axios from "axios";
+import { store } from "./store";
+import AppSearchBar from "./components/AppSearchBar.vue";
+import AppMoviesSeriesLists from "./components/AppMoviesSeriesLists.vue";
+
+export default{
+  data(){
+    return {
+      // store-code
+      store
+    }
+  },
+  components: {
+    AppSearchBar,
+    AppMoviesSeriesLists
+  },
+  methods: {
+    search(){
+      // start-user-call
+      console.log("Start call")
+      this.store.loader = true;
+      console.log(this.store.loader);
+     
+      // movies-user-search-call
+      axios
+        .get(this.store.apiMovieURL, { params: this.store.paramsApi })
+
+        .then( (resp) => {
+          this.store.resultMovies = resp.data.results;
+          console.log(this.store.resultMovies, "Movie");
+        })
+
+        // error-movie
+        .catch( (err) => {
+          console.log( err);
+        })
+
+        // end-call
+        .finally( () => {
+          console.log("End movie call");
+          // search
+          console.log("Start serie call");
+          
+          // series-user-search-call
+          axios
+            .get(this.store.apiSeriesURL, { params: this.store.paramsApi })
+
+            .then( (resp) => {
+              this.store.resultSeries = resp.data.results;
+              console.log(this.store.resultSeries, "Serie");
+            })
+
+            // error-serie
+            .catch( (err) => {
+              console.log( err);
+            })
+
+            // end-call
+            .finally( () => {
+              console.log("End serie call");
+              this.store.loader = false;
+              console.log(this.store.loader);
+            })
+        })
+  
+    }
+  }
+}
 </script>
+<!-- /script-section -->
 
+<!-- template-section -->
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <h1>Search</h1>
+  <!-- header-section -->
+  <header>
+    <AppSearchBar @search="search"/>
+  </header>
+  <!-- /header-section -->
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+  <!-- main-section -->
+  <main>
+    <AppMoviesSeriesLists />
+  </main>
+  <!-- /main-section -->
+
+</template>
+<!-- /template-section -->
+
+<!-- style-section -->
+<style lang="scss">
 </style>
+<!-- /style-section -->
